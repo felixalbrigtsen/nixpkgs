@@ -1,0 +1,33 @@
+diff --git a/retroshare-service/CMakeLists.txt b/retroshare-service/CMakeLists.txt
+index c7560728e..295430098 100644
+--- a/retroshare-service/CMakeLists.txt
++++ b/retroshare-service/CMakeLists.txt
+@@ -51,6 +51,11 @@ cmake_dependent_option(
+ 	"RS_JSON_API"
+ 	ON )
+ 
++option(
++  RS_FIX_CLANG
++  "Force C++17 standard"
++  OFF )
++
+ ################################################################################
+ 
+ set(FETCHCONTENT_QUIET OFF)
+@@ -77,6 +82,15 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+ 
+ install(TARGETS ${PROJECT_NAME} DESTINATION ${RS_BIN_INSTALL_DIR})
+ 
++if(RS_FIX_CLANG)
++  add_compile_definitions(
++    ${PROJECT_NAME} PRIVATE _LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION)
++
++  set(CMAKE_CXX_STANDARD 17)
++  set(CMAKE_CXX_STANDARD_REQUIRED ON)
++  # set(CMAKE_CXX_EXTENSIONS OFF)
++endif()
++
+ ################################################################################
+ 
+ if(RS_DEVELOPMENT_BUILD)
+

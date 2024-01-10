@@ -35043,7 +35043,9 @@ with pkgs;
   restique = libsForQt5.callPackage ../applications/backup/restique { };
 
   retroshare-gui = libsForQt5.callPackage ../applications/networking/p2p/retroshare/gui.nix { };
-  retroshare-service = callPackage ../applications/networking/p2p/retroshare/service.nix { };
+  retroshare-service = callPackage ../applications/networking/p2p/retroshare/service.nix {
+    inherit (darwin.apple_sdk.frameworks) Cocoa;
+  };
 
   revanced-cli = callPackage ../applications/misc/revanced-cli { };
 

@@ -1,4 +1,5 @@
 { lib
+, stdenv
 , mkDerivation
 , callPackage
 , cmake
@@ -10,8 +11,9 @@
 , libzip
 , miniupnpc
 , openssl
-, qtx11extras
+, qtmacextras
 , qtmultimedia
+, qtx11extras
 , rapidjson
 , sqlcipher
 , xapian
@@ -43,6 +45,8 @@ mkDerivation rec {
     rapidjson
     sqlcipher
     xapian
+   ] ++ lib.optionals stdenv.isDarwin [
+    qtmacextras
   ];
 
   qmakeFlags = common.RSVersionFlags ++ [
@@ -60,24 +64,37 @@ mkDerivation rec {
     # Embedded friendserver
     "CONFIG+=rs_efs"
 
-    # Webui
-    "CONFIG+=rs_webui"
-    "CONFIG+=rs_jsonapi"
-
-        # This is a separate program better built with cmake
+    # This is a separate program better built with cmake
     "CONFIG+=no_retroshare_service"
 
     # Upnp library autodetection doesn't work
     "RS_UPNP_LIB=miniupnpc"
   ] ++ lib.optionals (!friendServer) [
     "CONFIG+=no_retroshare_friendserver"
+  ] ++ lib.optionals stdenv.isDarwin [
+    "CONFIG+=c++14"
+    "CONFIG+=rs_use_native_dialogs"
+  ] ++ lib.optionals (!stdenv.isDarwin) [
+    # Webui
+    # jsonapi is required for webui, but broken on darwin
+    "CONFIG+=rs_webui"
+    "CONFIG+=rs_jsonapi"
   ];
+
+  installPhase = lib.optionalString stdenv.isDarwin ''
+    runHook preInstall
+
+    mkdir -p $out/Applications
+    cp -r retroshare-gui/src/retroshare.app $out/Applications
+
+    runHook postInstall
+  '';
 
   meta = with lib; {
     description = "Decentralized peer to peer chat application.";
     homepage = "https://retroshare.cc/";
     license = licenses.agpl3Only;
-    platforms = platforms.linux;
+    platforms = platforms.linux ++ platforms.darwin;
     maintainers = with maintainers; [ StijnDW dandellion ];
   };
 }
