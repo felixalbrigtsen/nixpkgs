@@ -24799,7 +24799,9 @@ with pkgs;
 
   SDL_audiolib = callPackage ../development/libraries/SDL_audiolib { };
 
-  SDL_sixel = callPackage ../development/libraries/SDL_sixel { };
+  SDL_sixel = callPackage ../development/libraries/SDL_sixel {
+    inherit (darwin.apple_sdk.frameworks) AudioUnit Cocoa CoreServices IOKit OpenGL;
+  };
 
   SDL_gfx = callPackage ../development/libraries/SDL_gfx { };
 
