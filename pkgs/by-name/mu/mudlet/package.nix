@@ -34,7 +34,8 @@ let
       luazip
     ]
   );
-  libPathVar = if stdenv.hostPlatform.isDarwin then "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH";
+  #libPathVar = if stdenv.hostPlatform.isDarwin then "DYLD_LIBRARY_PATH" else "LD_LIBRARY_PATH";
+  libPathVar = "LD_LIBRARY_PATH";
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "mudlet";
@@ -50,6 +51,10 @@ stdenv.mkDerivation (finalAttrs: {
     fetchSubmodules = true;
     hash = "sha256-9e9yNe06IE6W5p3LTMQdTYzLuysZfP88fIgvEtG36cw=";
   };
+
+  patches = [
+    ./01-darwin-rpath.patch
+  ];
 
   nativeBuildInputs = [
     cmake
@@ -90,6 +95,8 @@ stdenv.mkDerivation (finalAttrs: {
     mkdir -p $out/Applications
     cp -r src/mudlet.app/ $out/Applications/mudlet.app
   '';
+
+  # <stdin>:73:6: error: --prefix DYLD_LIBRARY_PATH would introduce an empty PATH-like segment (empty, or a leading/trailing/doubled `:`). This is interpreted as "search the current directory" by shells, execvp() and the dyna>
 
   preFixup = ''
     qtWrapperArgs+=(--set LUA_CPATH "${luaEnv}/lib/lua/${lua5_1.luaversion}/?.so")

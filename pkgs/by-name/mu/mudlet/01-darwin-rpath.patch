@@ -1,0 +1,25 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8ed1530bf..6563ba198 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -219,7 +219,7 @@ git_submodule_init(
+ # qtkeychain package is built against Homebrew's Qt, which is incompatible with
+ # the Qt installed by jurplel/install-qt-action in CI.
+ # See: https://github.com/Mudlet/Mudlet/issues/8875
+-if(APPLE)
++if(APPLE AND FALSE)
+   set(USE_OWN_QTKEYCHAIN ON)
+   git_submodule_init(
+     CHECK_FILE "3rdparty/qtkeychain/CMakeLists.txt"
+diff --git a/src/crash_reporter/CMakeLists.txt b/src/crash_reporter/CMakeLists.txt
+index ba4984cdd..02de08b70 100644
+--- a/src/crash_reporter/CMakeLists.txt
++++ b/src/crash_reporter/CMakeLists.txt
+@@ -38,7 +38,6 @@ endif()
+ # loader kills it before it can report anything. Both are appended to the
+ # automatically determined entries, so build-tree runs are unaffected.
+ if(APPLE)
+-    set_target_properties(MudletCrashReporter PROPERTIES BUILD_RPATH "@executable_path/../Frameworks")
+ elseif(UNIX)
+     set_target_properties(MudletCrashReporter PROPERTIES BUILD_RPATH "$ORIGIN/lib")
+ endif()
